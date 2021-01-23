@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -29,10 +30,6 @@ import com.gmail.darkusagi99.simplerss.dummy.DummyContent
  */
 class ItemFeedActivity : AppCompatActivity() {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,18 +71,6 @@ class ItemFeedActivity : AppCompatActivity() {
     class SimpleItemRecyclerViewAdapter(private val values: List<FeedConfig.FeedItem>) :
             RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
-        private val onClickListener: View.OnClickListener
-
-        init {
-            onClickListener = View.OnClickListener { v ->
-                val item = v.tag as FeedConfig.FeedItem
-
-                val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
-                }
-                v.context.startActivity(intent)
-            }
-        }
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.feed_list_content, parent, false)
@@ -96,9 +81,13 @@ class ItemFeedActivity : AppCompatActivity() {
             val item = values[position]
             holder.idView.text = item.url
 
+            holder.deleteButton.setOnClickListener {
+                FeedConfig.removeFeed(item.url)
+                this.notifyDataSetChanged()
+            }
+
             with(holder.itemView) {
                 tag = item
-                setOnClickListener(onClickListener)
             }
         }
 
@@ -106,6 +95,7 @@ class ItemFeedActivity : AppCompatActivity() {
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val idView: TextView = view.findViewById(R.id.id_text)
+            val deleteButton: Button = view.findViewById(R.id.delete_button)
         }
     }
 }
