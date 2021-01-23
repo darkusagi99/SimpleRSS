@@ -36,7 +36,7 @@ class ItemFeedActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_item_list)
+        setContentView(R.layout.activity_feed_list)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -64,15 +64,14 @@ class ItemFeedActivity : AppCompatActivity() {
                 .setNegativeButton("Non", dialogClickListener).show()
         }
 
-        setupRecyclerView(findViewById(R.id.item_list))
+        setupRecyclerView(findViewById(R.id.feed_list))
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, FeedConfig.FEED_MAP.values.toList())
+        recyclerView.adapter = SimpleItemRecyclerViewAdapter(FeedConfig.FEED_MAP.values.toList())
     }
 
-    class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemFeedActivity,
-                                        private val values: List<FeedConfig.FeedItem>) :
+    class SimpleItemRecyclerViewAdapter(private val values: List<FeedConfig.FeedItem>) :
             RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
         private val onClickListener: View.OnClickListener
@@ -89,14 +88,13 @@ class ItemFeedActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_list_content, parent, false)
+                    .inflate(R.layout.feed_list_content, parent, false)
             return ViewHolder(view)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
             holder.idView.text = item.url
-            holder.contentView.text = item.url
 
             with(holder.itemView) {
                 tag = item
@@ -108,7 +106,6 @@ class ItemFeedActivity : AppCompatActivity() {
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val idView: TextView = view.findViewById(R.id.id_text)
-            val contentView: TextView = view.findViewById(R.id.content)
         }
     }
 }
