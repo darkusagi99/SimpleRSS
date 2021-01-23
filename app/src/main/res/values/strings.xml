@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SimpleRSS</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="title_feed_list">Feed List</string>
 </resources>

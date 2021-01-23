@@ -30,7 +30,7 @@
         </activity>
         <activity
             android:name=".ItemFeedActivity"
-            android:label="@string/title_item_detail"
+            android:label="@string/title_feed_list"
             android:parentActivityName=".ItemListActivity"
             android:theme="@style/Theme.SimpleRSS.NoActionBar">
             <meta-data
