@@ -68,7 +68,7 @@ class ItemFeedActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(FeedConfig.FEED_MAP.values.toList())
+        recyclerView.adapter = SimpleItemRecyclerViewAdapter(FeedConfig.FEEDS)
     }
 
     class SimpleItemRecyclerViewAdapter(private val values: List<FeedConfig.FeedItem>) :

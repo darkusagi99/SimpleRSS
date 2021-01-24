@@ -65,6 +65,7 @@ class FeedDatabase(context: Context) {
         val cursor =  qb.query(sqlDB, projections, null, null, null, null, colUrl)
 
         FeedConfig.FEED_MAP.clear()
+        FeedConfig.FEEDS.clear()
         if (cursor.moveToFirst()) {
 
             do {
@@ -72,7 +73,9 @@ class FeedDatabase(context: Context) {
                 val lastUpdateInt = cursor.getInt(cursor.getColumnIndex(colLastUpdate))
                 val lastUpdateDate = Date(lastUpdateInt.toLong())
 
-                FeedConfig.FEED_MAP[url] = FeedConfig.FeedItem(url, lastUpdateDate)
+                val newFeed = FeedConfig.FeedItem(url, lastUpdateDate)
+                FeedConfig.FEED_MAP[url] = newFeed
+                FeedConfig.FEEDS.add(newFeed)
 
             } while (cursor.moveToNext())
         }
