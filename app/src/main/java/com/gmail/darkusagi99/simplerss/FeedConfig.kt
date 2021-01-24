@@ -1,5 +1,7 @@
 package com.gmail.darkusagi99.simplerss
 
+import android.content.ContentValues
+import android.content.Context
 import java.util.*
 
 object FeedConfig {
@@ -7,18 +9,23 @@ object FeedConfig {
     /**
      * A map of feeds.
      */
-    val FEED_MAP: MutableMap<String, FeedConfig.FeedItem> = HashMap()
+    val FEED_MAP: MutableMap<String, FeedItem> = HashMap()
 
     init {
-
     }
 
-    fun addFeed(feedUrl : String) {
+    fun addFeed(feedUrl : String, context : Context) {
         val newFeed = FeedItem(feedUrl, Date(1L))
+        val dbManager = FeedDatabase(context)
+
+        dbManager.insertFeed(feedUrl)
         FEED_MAP[feedUrl] = newFeed
     }
 
-    fun removeFeed(feedUrl : String) {
+    fun removeFeed(feedUrl : String, context : Context) {
+        val dbManager = FeedDatabase(context)
+
+        dbManager.deleteFeed(feedUrl)
         FEED_MAP.remove(feedUrl)
     }
 

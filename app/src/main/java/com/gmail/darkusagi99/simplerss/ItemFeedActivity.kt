@@ -33,6 +33,9 @@ class ItemFeedActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dbManager = FeedDatabase(this)
+        dbManager.loadAllFeeds()
+
         setContentView(R.layout.activity_feed_list)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -47,7 +50,7 @@ class ItemFeedActivity : AppCompatActivity() {
                     when (which) {
                         DialogInterface.BUTTON_POSITIVE -> {
                             Toast.makeText(this, "Création - " + taskEditText.text.toString(), Toast.LENGTH_SHORT).show()
-                            FeedConfig.addFeed(taskEditText.text.toString())
+                            FeedConfig.addFeed(taskEditText.text.toString(), this)
                         }
                         DialogInterface.BUTTON_NEGATIVE -> {
                             Toast.makeText(this, "Pas de Création - " + taskEditText.text.toString(), Toast.LENGTH_SHORT).show()
@@ -82,7 +85,7 @@ class ItemFeedActivity : AppCompatActivity() {
             holder.idView.text = item.url
 
             holder.deleteButton.setOnClickListener {
-                FeedConfig.removeFeed(item.url)
+                FeedConfig.removeFeed(item.url, it.context)
                 this.notifyDataSetChanged()
             }
 
