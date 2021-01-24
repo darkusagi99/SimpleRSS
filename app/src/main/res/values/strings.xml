@@ -4,4 +4,6 @@
     <string name="title_feed_list">Feed List</string>
     <string name="add_feed">add feed</string>
     <string name="delete_feed">Delete Feed</string>
+    <string name="feeds">Feeds</string>
+    <string name="refresh_feeds">Refresh Feeds</string>
 </resources>
