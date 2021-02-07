@@ -1,5 +1,6 @@
 package com.gmail.darkusagi99.simplerss
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -10,8 +11,10 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import android.widget.TextView
+import android.widget.Toast
 
 import com.gmail.darkusagi99.simplerss.dummy.DummyContent
+import java.util.logging.Logger
 
 /**
  * An activity representing a list of Pings. This activity
@@ -37,13 +40,6 @@ class ItemListActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.title = title
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-            val intent = Intent(view.context, ItemFeedActivity::class.java).apply {
-            }
-            view.context.startActivity(intent)
-        }
 
         if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -62,10 +58,15 @@ class ItemListActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    @SuppressLint("ResourceType")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.app_bar_feeds -> {
                 startActivity(Intent(this, ItemFeedActivity::class.java))
+            }
+            R.id.app_bar_refresh -> {
+                Toast.makeText(this.applicationContext, "Rafraîchissement", Toast.LENGTH_SHORT).show()
+                FeedList.refreshEntries(this);
             }
         }
         return super.onOptionsItemSelected(item)
