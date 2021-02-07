@@ -1,23 +1,23 @@
 package com.gmail.darkusagi99.simplerss
 
 import android.content.Context
+import android.graphics.Bitmap
 import java.util.HashMap
 import java.util.logging.Logger
 
 object FeedList {
 
-    val LOGGER : Logger = Logger.getGlobal()
+    private val LOGGER : Logger = Logger.getGlobal()
 
-    val ENTRIES : ArrayList<FeedEntry> = ArrayList<FeedEntry>()
+    val ENTRIES : ArrayList<FeedEntry> = ArrayList()
 
-    val rssParser : RSSParser = RSSParser()
+    private val rssParser : RSSParser = RSSParser()
 
     /**
      * A map of sample (dummy) items, by ID.
      */
     val ENTRY_MAP: MutableMap<String, FeedEntry> = HashMap()
 
-    private val COUNT = 25
 
     init {
         // Add some sample items.
@@ -27,6 +27,8 @@ object FeedList {
     fun addItem(item: FeedEntry) {
         ENTRY_MAP[item.link] = item
         ENTRIES.add(item)
+
+        LOGGER.info("Current list Size : " + ENTRIES.size)
     }
 
     // Method in order to refresh entries
@@ -41,19 +43,19 @@ object FeedList {
         // Loop on feeds
         for (currentFeed in FeedConfig.FEEDS) {
             LOGGER.info("Refresh Feeds - Current : " + currentFeed.url)
-            rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate)
+            rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time)
         }
 
     }
 
     fun initFeedEntry(): FeedList.FeedEntry {
-        return FeedEntry("", "", "", "", "")
+        return FeedEntry("", "", 0, "", "", null)
     }
 
     /**
      * A dummy item representing a piece of content.
      */
-    data class FeedEntry(var link: String, var title: String, var pubDate: String, var category: String, var description : String) {
+    data class FeedEntry(var link: String, var title: String?, var pubDate: Long?, var description: String?, var imgLink: String?, var enclosureImage: Bitmap?) {
         override fun toString(): String = link
     }
 

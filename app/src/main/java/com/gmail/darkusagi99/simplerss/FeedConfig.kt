@@ -1,13 +1,12 @@
 package com.gmail.darkusagi99.simplerss
 
-import android.content.ContentValues
 import android.content.Context
 import java.util.*
 import kotlin.collections.ArrayList
 
 object FeedConfig {
 
-    val FEEDS : ArrayList<FeedItem> = ArrayList<FeedItem>()
+    val FEEDS : ArrayList<FeedItem> = ArrayList()
 
     /**
      * A map of feeds.
@@ -33,6 +32,10 @@ object FeedConfig {
         val deleteFeed = FEED_MAP[feedUrl]
         FEEDS.remove(deleteFeed)
         FEED_MAP.remove(feedUrl)
+    }
+
+    fun updateFeed(feedUrl: String, lastUpdate: Date) {
+        // TODO - Mettre en place la date de dernière mise à jour
     }
 
     /**
