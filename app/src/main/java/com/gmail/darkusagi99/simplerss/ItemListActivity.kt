@@ -108,8 +108,9 @@ class ItemListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
-            holder.idView.text = item.link
+            holder.titleView.text = item.title
             holder.contentView.text = item.description
+            //holder.
 
             with(holder.itemView) {
                 tag = item
@@ -120,8 +121,11 @@ class ItemListActivity : AppCompatActivity() {
         override fun getItemCount() = values.size
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val idView: TextView = view.findViewById(R.id.id_text)
-            val contentView: TextView = view.findViewById(R.id.content)
+            val titleView: TextView = view.findViewById(R.id.item_title)
+            val contentView: TextView = view.findViewById(R.id.item_content)
+            //val contentUrl: TextView = view.findViewById(R.id.content)
+            //val contentView: TextView = view.findViewById(R.id.content)
+            //val contentView: TextView = view.findViewById(R.id.content)
         }
     }
 }

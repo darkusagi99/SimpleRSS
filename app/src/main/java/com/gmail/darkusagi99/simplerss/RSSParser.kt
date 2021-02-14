@@ -1,5 +1,6 @@
 package com.gmail.darkusagi99.simplerss
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -26,7 +27,7 @@ class RSSParser {
     private var rssItem : FeedList.FeedEntry ?= null
     private var text: String? = null
 
-    fun refreshFeed(feedUrl : String, lastUpdate : Long) {
+    fun refreshFeed(feedUrl : String, lastUpdate : Long, context : Context) {
         var stream: InputStream?
 
         val connectionUrl = URL(feedUrl)
@@ -45,17 +46,19 @@ class RSSParser {
         connect.connect();
 
         val responseCode: Int = connect.responseCode;
+        var updatedLastUpdate = lastUpdate
 
         if (responseCode == 200) {
             stream = connect.inputStream;
             try {
-                this.parse(stream!!, lastUpdate)
+                updatedLastUpdate = this.parse(stream!!, lastUpdate)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
 
-        // TODO - MAJ du chargement du dernier élément
+        // MAJ du chargement du dernier élément
+        FeedConfig.updateFeed(feedUrl, updatedLastUpdate, context)
 
     }
 
@@ -81,7 +84,7 @@ class RSSParser {
                     XmlPullParser.TEXT -> text = parser.text
                     XmlPullParser.END_TAG -> if (tagname.equals("item", ignoreCase = true)) {
                         // add entry object to list
-                        if (currentTime >= lastUpdate) {
+                        if (currentTime > lastUpdate) {
                             rssItem?.let { FeedList.addItem(it) }
                         }
                         foundItem = false

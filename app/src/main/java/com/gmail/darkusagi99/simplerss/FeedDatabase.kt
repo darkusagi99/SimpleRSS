@@ -87,7 +87,15 @@ class FeedDatabase(context: Context) {
         return sqlDB!!.delete(dbFeedTable, selection, selectionArgs)
     }
 
-    fun updateFeed(values: ContentValues, selection: String, selectionArgs: Array<String>): Int {
+    fun updateFeed(feedUrl: String, feedUpdateDate: Long): Int {
+
+        val values = ContentValues()
+        values.put(colUrl , feedUrl)
+        values.put(colLastUpdate, feedUpdateDate)
+
+        val selection = "$colUrl = ?"
+        val selectionArgs = arrayOf(feedUrl)
+
         return sqlDB!!.update(dbFeedTable, values, selection, selectionArgs)
     }
 

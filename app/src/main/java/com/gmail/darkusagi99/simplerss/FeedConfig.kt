@@ -34,14 +34,26 @@ object FeedConfig {
         FEED_MAP.remove(feedUrl)
     }
 
-    fun updateFeed(feedUrl: String, lastUpdate: Date) {
-        // TODO - Mettre en place la date de dernière mise à jour
+    fun updateFeed(feedUrl: String, lastUpdate: Long, context : Context) {
+        val dbManager = FeedDatabase(context)
+        val newUpdateDate = Date(lastUpdate)
+
+        val newFeed = FeedItem(feedUrl, newUpdateDate)
+
+        dbManager.updateFeed(feedUrl, lastUpdate)
+
+        val deleteFeed = FEED_MAP[feedUrl]
+        FEEDS.remove(deleteFeed)
+        FEED_MAP.remove(feedUrl)
+        FEED_MAP[feedUrl] = newFeed
+        FEEDS.add(newFeed)
+
     }
 
     /**
      * A dummy item representing a piece of content.
      */
-    data class FeedItem(val url: String, val lastUpdate: Date) {
+    data class FeedItem(val url: String, var lastUpdate: Date) {
         override fun toString(): String = url + " - " + lastUpdate.time
     }
 

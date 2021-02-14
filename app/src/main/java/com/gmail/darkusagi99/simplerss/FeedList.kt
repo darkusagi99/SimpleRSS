@@ -40,10 +40,12 @@ object FeedList {
         val dbManager = FeedDatabase(context)
         dbManager.loadAllFeeds()
 
+        val feedCopy : List<FeedConfig.FeedItem> = FeedConfig.FEEDS.clone() as List<FeedConfig.FeedItem>
+
         // Loop on feeds
-        for (currentFeed in FeedConfig.FEEDS) {
+        for (currentFeed in feedCopy) {
             LOGGER.info("Refresh Feeds - Current : " + currentFeed.url)
-            rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time)
+            rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time, context)
         }
 
     }
