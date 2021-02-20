@@ -21,28 +21,17 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class ItemListActivity : AppCompatActivity() {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private var twoPane: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dbManager = FeedDatabase(this)
+        dbManager.loadAllEntries()
+
         setContentView(R.layout.activity_item_list)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.title = title
-
-
-        if (findViewById<NestedScrollView>(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            twoPane = true
-        }
 
         setupRecyclerView(findViewById(R.id.item_list))
     }
@@ -61,19 +50,18 @@ class ItemListActivity : AppCompatActivity() {
             }
             R.id.app_bar_refresh -> {
                 Toast.makeText(this.applicationContext, "Rafraîchissement", Toast.LENGTH_SHORT).show()
-                FeedList.refreshEntries(this);
+                FeedList.refreshEntries(this)
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, FeedList.ENTRIES, twoPane)
+        recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, FeedList.ENTRIES)
     }
 
     class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity,
-                                        private val values: List<FeedList.FeedEntry>,
-                                        private val twoPane: Boolean) :
+                                        private val values: List<FeedList.FeedEntry>) :
             RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
         private val onClickListener: View.OnClickListener
@@ -81,22 +69,12 @@ class ItemListActivity : AppCompatActivity() {
         init {
             onClickListener = View.OnClickListener { v ->
                 val item = v.tag as FeedList.FeedEntry
-                if (twoPane) {
-                    val fragment = ItemDetailFragment().apply {
-                        arguments = Bundle().apply {
-                            putString(ItemDetailFragment.ARG_ITEM_ID, item.link)
-                        }
-                    }
-                    parentActivity.supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.item_detail_container, fragment)
-                            .commit()
-                } else {
-                    val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
-                        putExtra(ItemDetailFragment.ARG_ITEM_ID, item.link)
-                    }
-                    v.context.startActivity(intent)
+
+                val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
+                    putExtra(ItemDetailFragment.ARG_ITEM_ID, item.link)
                 }
+                v.context.startActivity(intent)
+
             }
         }
 

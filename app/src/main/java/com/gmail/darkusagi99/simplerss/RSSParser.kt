@@ -51,7 +51,7 @@ class RSSParser {
         if (responseCode == 200) {
             stream = connect.inputStream;
             try {
-                updatedLastUpdate = this.parse(stream!!, lastUpdate)
+                updatedLastUpdate = this.parse(stream!!, lastUpdate, context)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -63,7 +63,7 @@ class RSSParser {
     }
 
     // Parse RSS Feed entries and return result List
-    private fun parse(inputStream: InputStream, lastUpdate: Long) : Long {
+    private fun parse(inputStream: InputStream, lastUpdate: Long, context: Context) : Long {
         try {
             val factory = XmlPullParserFactory.newInstance()
             factory.isNamespaceAware = true
@@ -85,7 +85,7 @@ class RSSParser {
                     XmlPullParser.END_TAG -> if (tagname.equals("item", ignoreCase = true)) {
                         // add entry object to list
                         if (currentTime > lastUpdate) {
-                            rssItem?.let { FeedList.addItem(it) }
+                            rssItem?.let { FeedList.addItem(it, context) }
                         }
                         foundItem = false
                     } else if ( foundItem && tagname.equals("title", ignoreCase = true)) {

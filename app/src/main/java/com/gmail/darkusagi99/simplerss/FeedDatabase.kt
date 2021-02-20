@@ -19,11 +19,17 @@ class FeedDatabase(context: Context) {
     //columns
     var colUrl = "URL"
     var colLastUpdate = "LastUpdate"
+    var colTitle = "Title"
+    var colPubDate = "PubDate"
+    var colDescription = "Description"
+    var colImgLink = "ImageLink"
+    var colImgData = "ImageData"
     //database version
     var dbVersion = 1
 
     //CREATE TABLE IF NOT EXISTS MyNotes (ID INTEGER PRIMARY KEY,title TEXT, Description TEXT);"
     val sqlCreateFeedTable = "CREATE TABLE IF NOT EXISTS $dbFeedTable ($colUrl TEXT PRIMARY KEY,$colLastUpdate INTEGER);"
+    val sqlCreateEntriesTable = "CREATE TABLE IF NOT EXISTS $dbEntriesTable ($colUrl TEXT PRIMARY KEY,$colTitle TEXT,$colPubDate INTEGER,$colDescription TEXT,$colImgLink TEXT,$colImgData BLOB);"
 
     var sqlDB: SQLiteDatabase? = null
 
@@ -37,13 +43,19 @@ class FeedDatabase(context: Context) {
 
         override fun onCreate(db: SQLiteDatabase?) {
             db!!.execSQL(sqlCreateFeedTable)
+            db!!.execSQL(sqlCreateEntriesTable)
             Toast.makeText(this.context, "database created...", Toast.LENGTH_SHORT).show()
         }
 
         override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-            db!!.execSQL("Drop table if Exists$sqlCreateFeedTable")
+            db!!.execSQL("Drop table if Exists $dbFeedTable")
+            db!!.execSQL("Drop table if Exists $dbEntriesTable")
+            onCreate(db)
         }
 
+        override fun onDowngrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+            onUpgrade(db, oldVersion, newVersion)
+        }
 
     }
 
@@ -97,6 +109,57 @@ class FeedDatabase(context: Context) {
         val selectionArgs = arrayOf(feedUrl)
 
         return sqlDB!!.update(dbFeedTable, values, selection, selectionArgs)
+    }
+
+
+    fun insertEntry(newEntry: FeedList.FeedEntry): Long {
+
+        val imageData = byteArrayOf()
+
+        val values = ContentValues()
+        values.put(colUrl , newEntry.link)
+        values.put(colTitle, newEntry.title)
+        values.put(colPubDate, newEntry.pubDate)
+        values.put(colDescription, newEntry.description)
+        values.put(colImgLink, newEntry.imgLink)
+        values.put(colImgData, imageData)
+
+        val ID = sqlDB!!.insert(dbEntriesTable, "", values)
+        return ID
+    }
+
+    fun loadAllEntries() {
+        val qb = SQLiteQueryBuilder();
+        qb.tables = dbEntriesTable
+
+        val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
+        val cursor =  qb.query(sqlDB, projections, null, null, null, null, colUrl)
+
+        FeedList.ENTRY_MAP.clear()
+        FeedList.ENTRIES.clear()
+        if (cursor.moveToFirst()) {
+
+            do {
+                val url = cursor.getString(cursor.getColumnIndex(colUrl))
+                val title = cursor.getString(cursor.getColumnIndex(colTitle))
+                val pubDateInt = cursor.getLong(cursor.getColumnIndex(colPubDate))
+                val description = cursor.getString(cursor.getColumnIndex(colDescription))
+                val imageUrl = cursor.getString(cursor.getColumnIndex(colImgLink))
+                //val lastUpdateInt = cursor.getInt(cursor.getColumnIndex(colImgData))
+                //val lastUpdateDate = Date(lastUpdateInt.toLong())
+
+                val newEntry = FeedList.FeedEntry(url, title, pubDateInt, description, imageUrl, null)
+                FeedList.ENTRY_MAP[url] = newEntry
+                FeedList.ENTRIES.add(newEntry)
+
+            } while (cursor.moveToNext())
+        }
+    }
+
+    fun deleteEntry(entryUrl : String): Int {
+        val selection = "$colUrl = ?"
+        val selectionArgs = arrayOf(entryUrl)
+        return sqlDB!!.delete(dbEntriesTable, selection, selectionArgs)
     }
 
 }

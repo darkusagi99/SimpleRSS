@@ -24,7 +24,11 @@ object FeedList {
 
     }
 
-    fun addItem(item: FeedEntry) {
+    fun addItem(item: FeedEntry, context : Context) {
+
+        val dbManager = FeedDatabase(context)
+        dbManager.insertEntry(item)
+
         ENTRY_MAP[item.link] = item
         ENTRIES.add(item)
 
