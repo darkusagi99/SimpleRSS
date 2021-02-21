@@ -43,6 +43,22 @@ class ItemListActivity : AppCompatActivity() {
         toolbar.title = title
 
         setupRecyclerView(findViewById(R.id.item_list))
+
+        //actionbar
+        val total = FeedList.ENTRIES.count()
+        val mActionBar = supportActionBar
+        if (mActionBar != null) {
+            //set to actionbar as subtitle of actionbar
+            mActionBar.title = "$total entrée(s)"
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val dbManager = FeedDatabase(this)
+        dbManager.loadAllEntries()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

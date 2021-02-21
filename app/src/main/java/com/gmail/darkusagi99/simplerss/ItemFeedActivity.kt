@@ -62,6 +62,13 @@ class ItemFeedActivity : AppCompatActivity() {
         setupRecyclerView(findViewById(R.id.feed_list))
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val dbManager = FeedDatabase(this)
+        dbManager.loadAllFeeds()
+    }
+
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.adapter = SimpleItemRecyclerViewAdapter(FeedConfig.FEEDS)
     }
