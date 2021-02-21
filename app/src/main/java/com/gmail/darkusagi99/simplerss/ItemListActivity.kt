@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.view.*
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -143,9 +144,9 @@ class ItemListActivity : AppCompatActivity() {
             val contentEnclosure: ImageView = view.findViewById(R.id.item_enclosure)
 
             // Boutons
-            val deleteButton : TextView = view.findViewById(R.id.button_delete)
-            val shareButton : TextView = view.findViewById(R.id.button_share)
-            val openButton : TextView = view.findViewById(R.id.button_link)
+            val deleteButton : ImageButton = view.findViewById(R.id.button_delete)
+            val shareButton : ImageButton = view.findViewById(R.id.button_share)
+            val openButton : ImageButton = view.findViewById(R.id.button_link)
         }
     }
 }

@@ -6,4 +6,8 @@
     <string name="delete_feed">Delete Feed</string>
     <string name="feeds">Feeds</string>
     <string name="refresh_feeds">Refresh Feeds</string>
+    <string name="enclosure">enclosure</string>
+    <string name="browser">Browser</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
 </resources>
