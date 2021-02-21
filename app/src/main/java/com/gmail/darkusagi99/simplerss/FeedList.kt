@@ -35,6 +35,20 @@ object FeedList {
         LOGGER.info("Current list Size : " + ENTRIES.size)
     }
 
+    fun deleteItem(itemLink : String, context: Context) {
+
+        val dbManager = FeedDatabase(context)
+        dbManager.deleteFeed(itemLink)
+
+
+        val deleteEntry = ENTRY_MAP[itemLink]
+        ENTRIES.remove(deleteEntry)
+        ENTRY_MAP.remove(itemLink)
+
+        LOGGER.info("Current list Size : " + ENTRIES.size)
+
+    }
+
     // Method in order to refresh entries
     fun refreshEntries(context : Context) {
 

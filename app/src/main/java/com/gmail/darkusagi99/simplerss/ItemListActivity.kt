@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -88,7 +89,31 @@ class ItemListActivity : AppCompatActivity() {
             val item = values[position]
             holder.titleView.text = item.title
             holder.contentView.text = item.description
-            //holder.
+
+            // Contrôle des boutons
+            // Suppression
+            holder.deleteButton.setOnClickListener {
+                FeedList.deleteItem(item.link, it.context)
+                this.notifyDataSetChanged()
+            }
+
+
+            // Partage
+            holder.shareButton.setOnClickListener {
+                val shareIntent = Intent()
+                val shareLink : String = item.link
+                shareIntent.action = Intent.ACTION_SEND
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareLink)
+                startActivity(it.context, Intent.createChooser(shareIntent, shareLink), null)
+            }
+
+
+            // Ouvrir dans le navigateur
+            holder.openButton.setOnClickListener {
+                FeedList.deleteItem(item.link, it.context)
+                this.notifyDataSetChanged()
+            }
 
             with(holder.itemView) {
                 tag = item
@@ -99,11 +124,17 @@ class ItemListActivity : AppCompatActivity() {
         override fun getItemCount() = values.size
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            // Champs de l'entrée
             val titleView: TextView = view.findViewById(R.id.item_title)
             val contentView: TextView = view.findViewById(R.id.item_content)
             //val contentUrl: TextView = view.findViewById(R.id.content)
             //val contentView: TextView = view.findViewById(R.id.content)
             //val contentView: TextView = view.findViewById(R.id.content)
+
+            // Boutons
+            val deleteButton : TextView = view.findViewById(R.id.button_delete)
+            val shareButton : TextView = view.findViewById(R.id.button_share)
+            val openButton : TextView = view.findViewById(R.id.button_link)
         }
     }
 }
