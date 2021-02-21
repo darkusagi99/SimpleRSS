@@ -2,6 +2,7 @@ package com.gmail.darkusagi99.simplerss
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
+import java.net.URI
 
 /**
  * An activity representing a list of Pings. This activity
@@ -111,8 +113,9 @@ class ItemListActivity : AppCompatActivity() {
 
             // Ouvrir dans le navigateur
             holder.openButton.setOnClickListener {
-                FeedList.deleteItem(item.link, it.context)
-                this.notifyDataSetChanged()
+                val entryBrowser = Intent(Intent.ACTION_VIEW)
+                entryBrowser.data = Uri.parse(item.link)
+                startActivity(it.context, entryBrowser, null)
             }
 
             with(holder.itemView) {
