@@ -61,6 +61,10 @@ class ItemListActivity : AppCompatActivity() {
         dbManager.loadAllEntries()
     }
 
+    override fun onActivityReenter(resultCode: Int, data: Intent?) {
+        super.onActivityReenter(resultCode, data)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 

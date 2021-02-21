@@ -38,7 +38,7 @@ object FeedList {
     fun deleteItem(itemLink : String, context: Context) {
 
         val dbManager = FeedDatabase(context)
-        dbManager.deleteFeed(itemLink)
+        dbManager.deleteEntry(itemLink)
 
 
         val deleteEntry = ENTRY_MAP[itemLink]
@@ -68,7 +68,7 @@ object FeedList {
 
     }
 
-    fun initFeedEntry(): FeedList.FeedEntry {
+    fun initFeedEntry(): FeedEntry {
         return FeedEntry("", "", 0, "", "", null)
     }
 

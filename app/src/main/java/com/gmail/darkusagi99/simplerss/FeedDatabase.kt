@@ -35,7 +35,7 @@ class FeedDatabase(context: Context) {
     var sqlDB: SQLiteDatabase? = null
 
     init {
-        var db = DatabaseHelperFeeds(context)
+        val db = DatabaseHelperFeeds(context)
         sqlDB = db.writableDatabase
     }
 
@@ -44,13 +44,13 @@ class FeedDatabase(context: Context) {
 
         override fun onCreate(db: SQLiteDatabase?) {
             db!!.execSQL(sqlCreateFeedTable)
-            db!!.execSQL(sqlCreateEntriesTable)
+            db.execSQL(sqlCreateEntriesTable)
             Toast.makeText(this.context, "database created...", Toast.LENGTH_SHORT).show()
         }
 
         override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
             db!!.execSQL("Drop table if Exists $dbFeedTable")
-            db!!.execSQL("Drop table if Exists $dbEntriesTable")
+            db.execSQL("Drop table if Exists $dbEntriesTable")
             onCreate(db)
         }
 
@@ -71,7 +71,7 @@ class FeedDatabase(context: Context) {
     }
 
     fun loadAllFeeds() {
-        val qb = SQLiteQueryBuilder();
+        val qb = SQLiteQueryBuilder()
         qb.tables = dbFeedTable
 
         val projections = arrayOf(colUrl, colLastUpdate)
@@ -97,7 +97,7 @@ class FeedDatabase(context: Context) {
     fun deleteFeed(urlFeed : String): Int {
         val selection = "$colUrl = ?"
         val selectionArgs = arrayOf(urlFeed)
-        return sqlDB!!.delete(dbEntriesTable, selection, selectionArgs)
+        return sqlDB!!.delete(dbFeedTable, selection, selectionArgs)
     }
 
     fun updateFeed(feedUrl: String, feedUpdateDate: Long): Int {
@@ -133,7 +133,7 @@ class FeedDatabase(context: Context) {
     }
 
     fun loadAllEntries() {
-        val qb = SQLiteQueryBuilder();
+        val qb = SQLiteQueryBuilder()
         qb.tables = dbEntriesTable
 
         val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
