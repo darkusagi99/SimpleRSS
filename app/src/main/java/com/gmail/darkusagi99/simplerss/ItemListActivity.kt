@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.text.Html
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -96,7 +97,7 @@ class ItemListActivity : AppCompatActivity() {
 
             // Textes de l'item
             holder.titleView.text = item.title
-            holder.contentView.text = item.description
+            holder.contentView.text = Html.fromHtml(item.description, Html.FROM_HTML_OPTION_USE_CSS_COLORS)
 
             // Image d'illustration
             val enclosureImage = BitmapFactory.decodeStream(item.enclosureImage?.inputStream())
