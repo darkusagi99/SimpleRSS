@@ -2,16 +2,20 @@ package com.gmail.darkusagi99.simplerss
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.widget.ImageViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
+import java.io.InputStream
 import java.net.URI
 
 /**
@@ -89,8 +93,14 @@ class ItemListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
+
+            // Textes de l'item
             holder.titleView.text = item.title
             holder.contentView.text = item.description
+
+            // Image d'illustration
+            val enclosureImage = BitmapFactory.decodeStream(item.enclosureImage?.inputStream())
+            holder.contentEnclosure.setImageBitmap(enclosureImage)
 
             // Contrôle des boutons
             // Suppression
@@ -98,7 +108,6 @@ class ItemListActivity : AppCompatActivity() {
                 FeedList.deleteItem(item.link, it.context)
                 this.notifyDataSetChanged()
             }
-
 
             // Partage
             holder.shareButton.setOnClickListener {
@@ -130,9 +139,7 @@ class ItemListActivity : AppCompatActivity() {
             // Champs de l'entrée
             val titleView: TextView = view.findViewById(R.id.item_title)
             val contentView: TextView = view.findViewById(R.id.item_content)
-            //val contentUrl: TextView = view.findViewById(R.id.content)
-            //val contentView: TextView = view.findViewById(R.id.content)
-            //val contentView: TextView = view.findViewById(R.id.content)
+            val contentEnclosure: ImageView = view.findViewById(R.id.item_enclosure)
 
             // Boutons
             val deleteButton : TextView = view.findViewById(R.id.button_delete)

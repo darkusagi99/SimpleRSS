@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteQueryBuilder
 import android.widget.Toast
+import androidx.core.database.getBlobOrNull
 import java.util.*
 
 class FeedDatabase(context: Context) {
@@ -114,7 +115,10 @@ class FeedDatabase(context: Context) {
 
     fun insertEntry(newEntry: FeedList.FeedEntry): Long {
 
-        val imageData = byteArrayOf()
+        var imageData = byteArrayOf()
+        if (newEntry.enclosureImage != null) {
+            imageData = newEntry.enclosureImage!!
+        }
 
         val values = ContentValues()
         values.put(colUrl , newEntry.link)
@@ -145,10 +149,9 @@ class FeedDatabase(context: Context) {
                 val pubDateInt = cursor.getLong(cursor.getColumnIndex(colPubDate))
                 val description = cursor.getString(cursor.getColumnIndex(colDescription))
                 val imageUrl = cursor.getString(cursor.getColumnIndex(colImgLink))
-                //val lastUpdateInt = cursor.getInt(cursor.getColumnIndex(colImgData))
-                //val lastUpdateDate = Date(lastUpdateInt.toLong())
+                val imagedata = cursor.getBlobOrNull(cursor.getColumnIndex(colImgData))
 
-                val newEntry = FeedList.FeedEntry(url, title, pubDateInt, description, imageUrl, null)
+                val newEntry = FeedList.FeedEntry(url, title, pubDateInt, description, imageUrl, imagedata)
                 FeedList.ENTRY_MAP[url] = newEntry
                 FeedList.ENTRIES.add(newEntry)
 

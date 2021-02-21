@@ -98,7 +98,7 @@ class RSSParser {
                         rssItem!!.pubDate = currentTime
                     } else if (foundItem && tagname.equals("enclosure", ignoreCase = true)) {
                         rssItem!!.imgLink = parser.getAttributeValue(null, "url")
-                        rssItem!!.enclosureImage = getBitmapFromURL(rssItem!!.imgLink)
+                        rssItem!!.enclosureImage = getByteArrayFromURL(rssItem!!.imgLink)
                     } else if (foundItem && tagname.equals("description", ignoreCase = true)) {
                         rssItem!!.description = text.toString()
                     }
@@ -115,7 +115,7 @@ class RSSParser {
         return lastUpdate
     }
 
-    private fun getBitmapFromURL(src: String?): Bitmap? {
+    private fun getByteArrayFromURL(src: String?): ByteArray? {
         return try {
             val url = URL(src)
             val connection = url
@@ -123,7 +123,7 @@ class RSSParser {
             connection.doInput = true
             connection.connect()
             val input = connection.inputStream
-            BitmapFactory.decodeStream(input)
+            input.readBytes()
         } catch (e: IOException) {
             e.printStackTrace()
             null
