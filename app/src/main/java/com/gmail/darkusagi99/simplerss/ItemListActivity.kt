@@ -60,6 +60,7 @@ class ItemListActivity : AppCompatActivity() {
             R.id.app_bar_refresh -> {
                 Toast.makeText(this.applicationContext, "Rafraîchissement", Toast.LENGTH_SHORT).show()
                 FeedList.refreshEntries(this)
+                //startActivity(Intent(this, ItemListActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
