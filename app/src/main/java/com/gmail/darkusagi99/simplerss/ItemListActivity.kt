@@ -87,26 +87,11 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, FeedList.ENTRIES)
+        recyclerView.adapter = SimpleItemRecyclerViewAdapter(FeedList.ENTRIES)
     }
 
-    class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity,
-                                        private val values: List<FeedList.FeedEntry>) :
+    class SimpleItemRecyclerViewAdapter(private val values: List<FeedList.FeedEntry>) :
             RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
-
-        private val onClickListener: View.OnClickListener
-
-        init {
-            onClickListener = View.OnClickListener { v ->
-                val item = v.tag as FeedList.FeedEntry
-
-                val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
-                    putExtra(ItemDetailFragment.ARG_ITEM_ID, item.link)
-                }
-                v.context.startActivity(intent)
-
-            }
-        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
@@ -150,10 +135,6 @@ class ItemListActivity : AppCompatActivity() {
                 startActivity(it.context, entryBrowser, null)
             }
 
-            with(holder.itemView) {
-                tag = item
-                setOnClickListener(onClickListener)
-            }
         }
 
         override fun getItemCount() = values.size
