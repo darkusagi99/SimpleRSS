@@ -2,6 +2,7 @@ package com.gmail.darkusagi99.simplerss
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.webkit.URLUtil
 import java.util.HashMap
 import java.util.logging.Logger
 
@@ -62,8 +63,12 @@ object FeedList {
 
         // Loop on feeds
         for (currentFeed in feedCopy) {
-            LOGGER.info("Refresh Feeds - Current : " + currentFeed.url)
-            rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time, context)
+            if (URLUtil.isValidUrl(currentFeed.url)) {
+                LOGGER.info("Refresh Feeds - Current : " + currentFeed.url)
+                rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time, context)
+            } else {
+                LOGGER.warning("Invalid URL")
+            }
         }
 
     }
