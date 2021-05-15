@@ -47,19 +47,26 @@ class ItemListActivity : AppCompatActivity() {
         setupRecyclerView(findViewById(R.id.item_list))
 
         //actionbar
+        updateActionBar()
+        itemViewAdapter!!.updateActionBar(supportActionBar)
+
+    }
+
+    fun updateActionBar() {
+        //actionbar
         val total = feedItems.size
         val mActionBar = supportActionBar
         if (mActionBar != null) {
             //set to actionbar as subtitle of actionbar
             mActionBar.title = "$total entrée(s)"
         }
-
     }
 
     override fun onResume() {
         super.onResume()
 
         feedItems = dbManager!!.loadAllEntries()
+        itemViewAdapter!!.updateActionBar(supportActionBar)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -75,9 +82,9 @@ class ItemListActivity : AppCompatActivity() {
                 startActivity(Intent(this, ItemFeedActivity::class.java))
             }
             R.id.app_bar_refresh -> {
-                Toast.makeText(this.applicationContext, "Rafraîchissement", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Rafraîchissement", Toast.LENGTH_SHORT).show()
                 refreshEntries()
-                Toast.makeText(this.applicationContext, "Rafraîchissement terminé", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Rafraîchissement terminé", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -108,13 +115,7 @@ class ItemListActivity : AppCompatActivity() {
         itemViewAdapter!!.updateValues(feedItems)
 
         //actionbar
-        val total = feedItems.size
-        val mActionBar = supportActionBar
-        if (mActionBar != null) {
-            //set to actionbar as subtitle of actionbar
-            mActionBar.title = "$total entrée(s)"
-        }
-
+        updateActionBar()
     }
 
 }

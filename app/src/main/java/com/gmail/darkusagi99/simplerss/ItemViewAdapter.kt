@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 class ItemViewAdapter(private var values: ArrayList<FeedEntry>, dbManager: FeedDatabase, supportActionBar: ActionBar?) :
         RecyclerView.Adapter<ItemViewAdapter.ViewHolder>() {
 
-    var dbManager: FeedDatabase? = null
-    var supportActionBar: ActionBar? = null
+    private var dbManager: FeedDatabase? = null
+    private var supportActionBar: ActionBar? = null
 
     init {
         this.dbManager = dbManager
@@ -26,9 +26,13 @@ class ItemViewAdapter(private var values: ArrayList<FeedEntry>, dbManager: FeedD
     }
 
     fun updateValues(newValues: ArrayList<FeedEntry>) {
-        values = newValues;
+        values = newValues
         this.notifyDataSetChanged()
         this.notifyItemRangeChanged(0, values.size)
+    }
+
+    fun updateActionBar(supportActionBar: ActionBar?) {
+        this.supportActionBar = supportActionBar
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
