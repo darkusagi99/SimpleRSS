@@ -1,6 +1,5 @@
 package com.gmail.darkusagi99.simplerss
 
-import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import org.xmlpull.v1.XmlPullParser
@@ -24,7 +23,7 @@ class RSSParser {
     private var text: String? = null
 
     fun refreshFeed(feedUrl : String, lastUpdate : Long, dbManager : FeedDatabase) {
-        var stream: InputStream?
+        val stream: InputStream?
 
         val connectionUrl = URL(feedUrl)
 
@@ -45,7 +44,7 @@ class RSSParser {
         var updatedLastUpdate = lastUpdate
 
         if (responseCode == 200) {
-            stream = connect.inputStream;
+            stream = connect.inputStream
             try {
                 updatedLastUpdate = this.parse(stream!!, lastUpdate, dbManager)
             } catch (e: IOException) {

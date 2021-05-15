@@ -2,14 +2,8 @@ package com.gmail.darkusagi99.simplerss
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -19,12 +13,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * An activity representing a list of Pings. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a [ItemDetailActivity] representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
+ * An activity representing a list of Feeds
  */
 class ItemFeedActivity : AppCompatActivity() {
 

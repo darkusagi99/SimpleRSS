@@ -3,22 +3,16 @@ package com.gmail.darkusagi99.simplerss
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
-import java.util.logging.Logger
-import kotlin.collections.ArrayList
 
 /**
- * An activity representing a list of Pings. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a [ItemDetailActivity] representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
+ * An activity representing a list of Feed contents
  */
 class ItemListActivity : AppCompatActivity() {
 
@@ -27,7 +21,6 @@ class ItemListActivity : AppCompatActivity() {
     private var dbManager: FeedDatabase ? = null
     private var itemViewAdapter : ItemViewAdapter? = null
 
-    private val LOGGER : Logger = Logger.getGlobal()
     private val rssParser : RSSParser = RSSParser()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +45,7 @@ class ItemListActivity : AppCompatActivity() {
 
     }
 
-    fun updateActionBar() {
+    private fun updateActionBar() {
         //actionbar
         val total = feedItems.size
         val mActionBar = supportActionBar
@@ -103,10 +96,7 @@ class ItemListActivity : AppCompatActivity() {
         // Loop on feeds
         for (currentFeed in feedCopy) {
             if (URLUtil.isValidUrl(currentFeed.url)) {
-                LOGGER.info("Refresh Feeds - Current : " + currentFeed.url)
                 rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time, dbManager!!)
-            } else {
-                LOGGER.warning("Invalid URL")
             }
         }
 

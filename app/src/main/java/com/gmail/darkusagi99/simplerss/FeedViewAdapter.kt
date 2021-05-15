@@ -11,14 +11,14 @@ class FeedViewAdapter (private var values: ArrayList<FeedItem>, dbManager : Feed
         RecyclerView.Adapter<FeedViewAdapter.ViewHolder>() {
 
 
-    var dbManager: FeedDatabase? = null
+    private var dbManager: FeedDatabase? = null
 
     init {
         this.dbManager = dbManager
     }
 
     fun updateValues(newValues: ArrayList<FeedItem>) {
-        values = newValues;
+        values = newValues
         this.notifyDataSetChanged()
         this.notifyItemRangeChanged(0, values.size)
     }

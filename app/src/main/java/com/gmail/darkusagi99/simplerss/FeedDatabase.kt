@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteQueryBuilder
 import androidx.core.database.getBlobOrNull
 import java.util.*
-import java.util.logging.Logger
 import kotlin.collections.ArrayList
 
 class FeedDatabase(context: Context) {
@@ -18,21 +17,21 @@ class FeedDatabase(context: Context) {
     var dbFeedTable = "FEEDS"
     var dbEntriesTable = "ENTRIES"
     //columns
-    var colUrl = "URL"
-    var colLastUpdate = "LastUpdate"
-    var colTitle = "Title"
-    var colPubDate = "PubDate"
-    var colDescription = "Description"
-    var colImgLink = "ImageLink"
-    var colImgData = "ImageData"
+    private var colUrl = "URL"
+    private var colLastUpdate = "LastUpdate"
+    private var colTitle = "Title"
+    private var colPubDate = "PubDate"
+    private var colDescription = "Description"
+    private var colImgLink = "ImageLink"
+    private var colImgData = "ImageData"
     //database version
-    var dbVersion = 1
+    var dbVersion = 3
 
     //CREATE TABLE IF NOT EXISTS MyNotes (ID INTEGER PRIMARY KEY,title TEXT, Description TEXT);"
     val sqlCreateFeedTable = "CREATE TABLE IF NOT EXISTS $dbFeedTable ($colUrl TEXT PRIMARY KEY,$colLastUpdate INTEGER);"
     val sqlCreateEntriesTable = "CREATE TABLE IF NOT EXISTS $dbEntriesTable ($colUrl TEXT PRIMARY KEY,$colTitle TEXT,$colPubDate INTEGER,$colDescription TEXT,$colImgLink TEXT,$colImgData BLOB);"
 
-    var sqlDB: SQLiteDatabase? = null
+    private var sqlDB: SQLiteDatabase? = null
 
     init {
         val db = DatabaseHelperFeeds(context)
@@ -64,8 +63,7 @@ class FeedDatabase(context: Context) {
         values.put(colUrl , feedUrl)
         values.put(colLastUpdate, 1)
 
-        val ID = sqlDB!!.insert(dbFeedTable, "", values)
-        return ID
+        return sqlDB!!.insert(dbFeedTable, "", values)
     }
 
     fun  loadAllFeeds() : ArrayList<FeedItem> {
@@ -90,7 +88,7 @@ class FeedDatabase(context: Context) {
         }
         cursor.close()
 
-        return feedList;
+        return feedList
     }
 
     fun deleteFeed(urlFeed : String): Int {
@@ -116,7 +114,7 @@ class FeedDatabase(context: Context) {
 
         var imageData = byteArrayOf()
         if (newEntry!!.enclosureImage != null) {
-            imageData = newEntry!!.enclosureImage!!
+            imageData = newEntry.enclosureImage!!
         }
 
         val values = ContentValues()
@@ -137,13 +135,13 @@ class FeedDatabase(context: Context) {
         val cursor =  qb.query(sqlDB, projections, selection, selectionArgs, null, null, null)
         cursor.count
 
-        var ID = 0L
+        var id = 0L
         if (cursor.count == 0) {
-            ID = sqlDB!!.insert(dbEntriesTable, "", values)
+            id = sqlDB!!.insert(dbEntriesTable, "", values)
         }
         cursor.close()
 
-        return ID
+        return id
     }
 
     fun loadAllEntries() : ArrayList<FeedEntry> {
@@ -152,7 +150,6 @@ class FeedDatabase(context: Context) {
         val qb = SQLiteQueryBuilder()
         qb.tables = dbEntriesTable
 
-        //val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
         val cursor =  qb.query(sqlDB, null, null, null, null, null, null)
 
         if (cursor.moveToFirst()) {
