@@ -152,10 +152,8 @@ class FeedDatabase(context: Context) {
         val qb = SQLiteQueryBuilder()
         qb.tables = dbEntriesTable
 
-        val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
-        val selection = "$colUrl LIKE ?"
-        val selectionArgs = arrayOf("%")
-        val cursor =  qb.query(sqlDB, projections, selection, selectionArgs, null, null, null)
+        //val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
+        val cursor =  qb.query(sqlDB, null, null, null, null, null, null)
 
         if (cursor.moveToFirst()) {
 

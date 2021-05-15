@@ -2,6 +2,7 @@ package com.gmail.darkusagi99.simplerss
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Typeface
 import android.net.Uri
 import android.text.Html
 import android.view.LayoutInflater
@@ -45,6 +46,7 @@ class ItemViewAdapter(private var values: ArrayList<FeedEntry>, dbManager: FeedD
         val item = values[position]
 
         // Textes de l'item
+        holder.titleView.setTypeface(null, Typeface.BOLD)
         holder.titleView.text = item.title
         holder.contentView.text = Html.fromHtml(item.description, Html.FROM_HTML_OPTION_USE_CSS_COLORS)
 
