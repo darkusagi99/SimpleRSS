@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteQueryBuilder
 import androidx.core.database.getBlobOrNull
 import java.util.*
+import java.util.logging.Logger
 import kotlin.collections.ArrayList
 
 class FeedDatabase(context: Context) {
@@ -87,6 +88,7 @@ class FeedDatabase(context: Context) {
 
             } while (cursor.moveToNext())
         }
+        cursor.close()
 
         return feedList;
     }
@@ -110,11 +112,11 @@ class FeedDatabase(context: Context) {
     }
 
 
-    fun insertEntry(newEntry: FeedEntry): Long {
+    fun insertEntry(newEntry: FeedEntry?): Long {
 
         var imageData = byteArrayOf()
-        if (newEntry.enclosureImage != null) {
-            imageData = newEntry.enclosureImage!!
+        if (newEntry!!.enclosureImage != null) {
+            imageData = newEntry!!.enclosureImage!!
         }
 
         val values = ContentValues()
@@ -125,12 +127,22 @@ class FeedDatabase(context: Context) {
         values.put(colImgLink, newEntry.imgLink)
         values.put(colImgData, imageData)
 
-        // Suppression de l'entrée avant ré-insertion
-        val deleteSelection = "$colUrl = ?"
-        val deleteSelectionArgs = arrayOf(newEntry.link)
-        sqlDB!!.delete(dbEntriesTable, deleteSelection, deleteSelectionArgs)
 
-        val ID = sqlDB!!.insert(dbEntriesTable, "", values)
+        val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
+        val qb = SQLiteQueryBuilder()
+        qb.tables = dbEntriesTable
+
+        val selection = "$colUrl = ?"
+        val selectionArgs = arrayOf(newEntry.link)
+        val cursor =  qb.query(sqlDB, projections, selection, selectionArgs, null, null, null)
+        cursor.count
+
+        var ID = 0L
+        if (cursor.count == 0) {
+            ID = sqlDB!!.insert(dbEntriesTable, "", values)
+        }
+        cursor.close()
+
         return ID
     }
 
@@ -141,7 +153,9 @@ class FeedDatabase(context: Context) {
         qb.tables = dbEntriesTable
 
         val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
-        val cursor =  qb.query(sqlDB, projections, null, null, null, null, colUrl)
+        val selection = "$colUrl LIKE ?"
+        val selectionArgs = arrayOf("%")
+        val cursor =  qb.query(sqlDB, projections, selection, selectionArgs, null, null, null)
 
         if (cursor.moveToFirst()) {
 
@@ -158,6 +172,7 @@ class FeedDatabase(context: Context) {
 
             } while (cursor.moveToNext())
         }
+        cursor.close()
         return feedEntries
     }
 

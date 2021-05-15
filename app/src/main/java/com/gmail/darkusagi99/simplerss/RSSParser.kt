@@ -81,7 +81,7 @@ class RSSParser {
                     XmlPullParser.END_TAG -> if (tagname.equals("item", ignoreCase = true)) {
                         // add entry object to list
                         if (currentTime > lastUpdate) {
-                            rssItem?.let { dbManager.insertEntry(it) }
+                            dbManager.insertEntry(rssItem)
                         }
                         foundItem = false
                     } else if ( foundItem && tagname.equals("title", ignoreCase = true)) {
