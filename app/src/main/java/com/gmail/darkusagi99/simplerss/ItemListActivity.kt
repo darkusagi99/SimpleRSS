@@ -31,10 +31,13 @@ import java.net.URI
 class ItemListActivity : AppCompatActivity() {
 
 
+    private var dbManager: FeedDatabase ? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dbManager = FeedDatabase(this)
-        dbManager.loadAllEntries()
+
+        dbManager = FeedDatabase(this)
+        dbManager!!.loadAllEntries()
 
         setContentView(R.layout.activity_item_list)
 
@@ -57,8 +60,7 @@ class ItemListActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val dbManager = FeedDatabase(this)
-        dbManager.loadAllEntries()
+        dbManager!!.loadAllEntries()
     }
 
     override fun onActivityReenter(resultCode: Int, data: Intent?) {
@@ -79,7 +81,8 @@ class ItemListActivity : AppCompatActivity() {
             }
             R.id.app_bar_refresh -> {
                 Toast.makeText(this.applicationContext, "Rafraîchissement", Toast.LENGTH_SHORT).show()
-                FeedList.refreshEntries(this)
+                dbManager?.let { FeedList.refreshEntries(it) }
+
                 Toast.makeText(this.applicationContext, "Rafraîchissement terminé", Toast.LENGTH_SHORT).show()
             }
         }
@@ -90,7 +93,7 @@ class ItemListActivity : AppCompatActivity() {
         recyclerView.adapter = SimpleItemRecyclerViewAdapter(FeedList.ENTRIES)
     }
 
-    class SimpleItemRecyclerViewAdapter(private val values: List<FeedList.FeedEntry>) :
+    class SimpleItemRecyclerViewAdapter(private val values: List<FeedEntry>) :
             RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

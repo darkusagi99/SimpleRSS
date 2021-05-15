@@ -1,10 +1,14 @@
 package com.gmail.darkusagi99.simplerss
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.webkit.URLUtil
-import java.util.HashMap
+import java.util.*
 import java.util.logging.Logger
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.MutableMap
+import kotlin.collections.remove
+import kotlin.collections.set
 
 object FeedList {
 
@@ -25,9 +29,8 @@ object FeedList {
 
     }
 
-    fun addItem(item: FeedEntry, context : Context) {
+    fun addItem(item: FeedEntry, dbManager : FeedDatabase) {
 
-        val dbManager = FeedDatabase(context)
         dbManager.insertEntry(item)
 
         ENTRY_MAP[item.link] = item
@@ -51,21 +54,20 @@ object FeedList {
     }
 
     // Method in order to refresh entries
-    fun refreshEntries(context : Context) {
+    fun refreshEntries(dbManager: FeedDatabase) {
 
         // In order to refresh entries List, loop on Feeds and check them.
         LOGGER.info("Refresh Feeds")
 
-        val dbManager = FeedDatabase(context)
         dbManager.loadAllFeeds()
 
-        val feedCopy : List<FeedConfig.FeedItem> = FeedConfig.FEEDS.clone() as List<FeedConfig.FeedItem>
+        val feedCopy : List<FeedItem> = dbManager.loadAllFeeds()
 
         // Loop on feeds
         for (currentFeed in feedCopy) {
             if (URLUtil.isValidUrl(currentFeed.url)) {
                 LOGGER.info("Refresh Feeds - Current : " + currentFeed.url)
-                rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time, context)
+                rssParser.refreshFeed(currentFeed.url, currentFeed.lastUpdate.time, dbManager)
             } else {
                 LOGGER.warning("Invalid URL")
             }
@@ -75,13 +77,6 @@ object FeedList {
 
     fun initFeedEntry(): FeedEntry {
         return FeedEntry("", "", 0, "", "", null)
-    }
-
-    /**
-     * A dummy item representing a piece of content.
-     */
-    data class FeedEntry(var link: String, var title: String?, var pubDate: Long?, var description: String?, var imgLink: String?, var enclosureImage: ByteArray?) {
-        override fun toString(): String = link
     }
 
 }

@@ -2,13 +2,12 @@ package com.gmail.darkusagi99.simplerss
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteQueryBuilder
-import android.widget.Toast
 import androidx.core.database.getBlobOrNull
 import java.util.*
+import kotlin.collections.ArrayList
 
 class FeedDatabase(context: Context) {
 
@@ -40,12 +39,10 @@ class FeedDatabase(context: Context) {
     }
 
     inner class DatabaseHelperFeeds(context: Context) : SQLiteOpenHelper(context, dbName, null, dbVersion) {
-        var context: Context? = context
 
         override fun onCreate(db: SQLiteDatabase?) {
             db!!.execSQL(sqlCreateFeedTable)
             db.execSQL(sqlCreateEntriesTable)
-            Toast.makeText(this.context, "database created...", Toast.LENGTH_SHORT).show()
         }
 
         override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -70,15 +67,14 @@ class FeedDatabase(context: Context) {
         return ID
     }
 
-    fun loadAllFeeds() {
+    fun  loadAllFeeds() : ArrayList<FeedItem> {
+        val feedList = ArrayList<FeedItem>()
         val qb = SQLiteQueryBuilder()
         qb.tables = dbFeedTable
 
         val projections = arrayOf(colUrl, colLastUpdate)
         val cursor =  qb.query(sqlDB, projections, null, null, null, null, colUrl)
 
-        FeedConfig.FEED_MAP.clear()
-        FeedConfig.FEEDS.clear()
         if (cursor.moveToFirst()) {
 
             do {
@@ -86,12 +82,13 @@ class FeedDatabase(context: Context) {
                 val lastUpdateInt = cursor.getInt(cursor.getColumnIndex(colLastUpdate))
                 val lastUpdateDate = Date(lastUpdateInt.toLong())
 
-                val newFeed = FeedConfig.FeedItem(url, lastUpdateDate)
-                FeedConfig.FEED_MAP[url] = newFeed
-                FeedConfig.FEEDS.add(newFeed)
+                val newFeed = FeedItem(url, lastUpdateDate)
+                feedList.add(newFeed)
 
             } while (cursor.moveToNext())
         }
+
+        return feedList;
     }
 
     fun deleteFeed(urlFeed : String): Int {
@@ -113,7 +110,7 @@ class FeedDatabase(context: Context) {
     }
 
 
-    fun insertEntry(newEntry: FeedList.FeedEntry): Long {
+    fun insertEntry(newEntry: FeedEntry): Long {
 
         var imageData = byteArrayOf()
         if (newEntry.enclosureImage != null) {
@@ -151,7 +148,7 @@ class FeedDatabase(context: Context) {
                 val imageUrl = cursor.getString(cursor.getColumnIndex(colImgLink))
                 val imagedata = cursor.getBlobOrNull(cursor.getColumnIndex(colImgData))
 
-                val newEntry = FeedList.FeedEntry(url, title, pubDateInt, description, imageUrl, imagedata)
+                val newEntry = FeedEntry(url, title, pubDateInt, description, imageUrl, imagedata)
                 FeedList.ENTRY_MAP[url] = newEntry
                 FeedList.ENTRIES.add(newEntry)
 

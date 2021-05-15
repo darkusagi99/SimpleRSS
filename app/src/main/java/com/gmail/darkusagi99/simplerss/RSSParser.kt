@@ -1,8 +1,6 @@
 package com.gmail.darkusagi99.simplerss
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.StrictMode
 import org.xmlpull.v1.XmlPullParser
@@ -15,8 +13,6 @@ import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
-import kotlin.math.max
 
 
 /**
@@ -24,10 +20,10 @@ import kotlin.math.max
  * */
 class RSSParser {
 
-    private var rssItem : FeedList.FeedEntry ?= null
+    private var rssItem : FeedEntry ?= null
     private var text: String? = null
 
-    fun refreshFeed(feedUrl : String, lastUpdate : Long, context : Context) {
+    fun refreshFeed(feedUrl : String, lastUpdate : Long, dbManager : FeedDatabase) {
         var stream: InputStream?
 
         val connectionUrl = URL(feedUrl)
@@ -51,19 +47,19 @@ class RSSParser {
         if (responseCode == 200) {
             stream = connect.inputStream;
             try {
-                updatedLastUpdate = this.parse(stream!!, lastUpdate, context)
+                updatedLastUpdate = this.parse(stream!!, lastUpdate, dbManager)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
 
         // MAJ du chargement du dernier élément
-        FeedConfig.updateFeed(feedUrl, updatedLastUpdate, context)
+        dbManager.updateFeed(feedUrl, lastUpdate)
 
     }
 
     // Parse RSS Feed entries and return result List
-    private fun parse(inputStream: InputStream, lastUpdate: Long, context: Context) : Long {
+    private fun parse(inputStream: InputStream, lastUpdate: Long, dbManager : FeedDatabase) : Long {
         try {
             val factory = XmlPullParserFactory.newInstance()
             factory.isNamespaceAware = true
@@ -85,7 +81,7 @@ class RSSParser {
                     XmlPullParser.END_TAG -> if (tagname.equals("item", ignoreCase = true)) {
                         // add entry object to list
                         if (currentTime > lastUpdate) {
-                            rssItem?.let { FeedList.addItem(it, context) }
+                            rssItem?.let { dbManager.insertEntry(it) }
                         }
                         foundItem = false
                     } else if ( foundItem && tagname.equals("title", ignoreCase = true)) {
