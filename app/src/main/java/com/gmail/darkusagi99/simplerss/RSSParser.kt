@@ -39,9 +39,9 @@ class RSSParser {
         connect.readTimeout = 8000
         connect.connectTimeout = 8000
         connect.requestMethod = "GET"
-        connect.connect();
+        connect.connect()
 
-        val responseCode: Int = connect.responseCode;
+        val responseCode: Int = connect.responseCode
         var updatedLastUpdate = lastUpdate
 
         if (responseCode == 200) {
@@ -54,7 +54,7 @@ class RSSParser {
         }
 
         // MAJ du chargement du dernier élément
-        dbManager.updateFeed(feedUrl, lastUpdate)
+        dbManager.updateFeed(feedUrl, updatedLastUpdate)
 
     }
 
@@ -75,7 +75,7 @@ class RSSParser {
                     XmlPullParser.START_TAG -> if (tagname.equals("item", ignoreCase = true)) {
                         // create a new instance of entry
                         foundItem = true
-                        rssItem = FeedList.initFeedEntry()
+                        rssItem = FeedEntry("", "", 0, "", "", null)
                     }
                     XmlPullParser.TEXT -> text = parser.text
                     XmlPullParser.END_TAG -> if (tagname.equals("item", ignoreCase = true)) {

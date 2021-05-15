@@ -125,19 +125,24 @@ class FeedDatabase(context: Context) {
         values.put(colImgLink, newEntry.imgLink)
         values.put(colImgData, imageData)
 
+        // Suppression de l'entrée avant ré-insertion
+        val deleteSelection = "$colUrl = ?"
+        val deleteSelectionArgs = arrayOf(newEntry.link)
+        sqlDB!!.delete(dbEntriesTable, deleteSelection, deleteSelectionArgs)
+
         val ID = sqlDB!!.insert(dbEntriesTable, "", values)
         return ID
     }
 
-    fun loadAllEntries() {
+    fun loadAllEntries() : ArrayList<FeedEntry> {
+
+        val feedEntries = ArrayList<FeedEntry>()
         val qb = SQLiteQueryBuilder()
         qb.tables = dbEntriesTable
 
         val projections = arrayOf(colUrl, colTitle, colPubDate, colDescription, colImgLink, colImgData)
         val cursor =  qb.query(sqlDB, projections, null, null, null, null, colUrl)
 
-        FeedList.ENTRY_MAP.clear()
-        FeedList.ENTRIES.clear()
         if (cursor.moveToFirst()) {
 
             do {
@@ -146,14 +151,14 @@ class FeedDatabase(context: Context) {
                 val pubDateInt = cursor.getLong(cursor.getColumnIndex(colPubDate))
                 val description = cursor.getString(cursor.getColumnIndex(colDescription))
                 val imageUrl = cursor.getString(cursor.getColumnIndex(colImgLink))
-                val imagedata = cursor.getBlobOrNull(cursor.getColumnIndex(colImgData))
+                val imageData = cursor.getBlobOrNull(cursor.getColumnIndex(colImgData))
 
-                val newEntry = FeedEntry(url, title, pubDateInt, description, imageUrl, imagedata)
-                FeedList.ENTRY_MAP[url] = newEntry
-                FeedList.ENTRIES.add(newEntry)
+                val newEntry = FeedEntry(url, title, pubDateInt, description, imageUrl, imageData)
+                feedEntries.add(newEntry)
 
             } while (cursor.moveToNext())
         }
+        return feedEntries
     }
 
     fun deleteEntry(entryUrl : String): Int {
