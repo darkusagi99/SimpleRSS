@@ -80,6 +80,7 @@ class RSSParser {
                     XmlPullParser.END_TAG -> if (tagname.equals("item", ignoreCase = true)) {
                         // add entry object to list
                         if (currentTime > lastUpdate) {
+                            rssItem!!.enclosureImage = getByteArrayFromURL(rssItem!!.imgLink)
                             dbManager.insertEntry(rssItem)
                         }
                         foundItem = false
@@ -93,7 +94,6 @@ class RSSParser {
                         rssItem!!.pubDate = currentTime
                     } else if (foundItem && tagname.equals("enclosure", ignoreCase = true)) {
                         rssItem!!.imgLink = parser.getAttributeValue(null, "url")
-                        rssItem!!.enclosureImage = getByteArrayFromURL(rssItem!!.imgLink)
                     } else if (foundItem && tagname.equals("description", ignoreCase = true)) {
                         rssItem!!.description = text.toString()
                     }
