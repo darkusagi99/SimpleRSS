@@ -43,6 +43,21 @@ class FeedDatabase(context: Context) {
         override fun onCreate(db: SQLiteDatabase?) {
             db!!.execSQL(sqlCreateFeedTable)
             db.execSQL(sqlCreateEntriesTable)
+
+            // Init fields
+            initInsertFeed(db, "https://korben.info/feed")
+            initInsertFeed(db,"https://www.francetvinfo.fr/titres.rss")
+            initInsertFeed(db, "https://www.futura-sciences.com/rss/actualites.xml")
+
+        }
+
+        private fun initInsertFeed(db: SQLiteDatabase?, feedUrl: String): Long {
+
+            val values = ContentValues()
+            values.put(colUrl , feedUrl)
+            values.put(colLastUpdate, 1)
+
+            return db!!.insert(dbFeedTable, "", values)
         }
 
         override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -132,7 +147,7 @@ class FeedDatabase(context: Context) {
 
         val selection = "$colUrl = ?"
         val selectionArgs = arrayOf(newEntry.link)
-        val cursor =  qb.query(sqlDB, projections, selection, selectionArgs, null, null, null)
+        val cursor =  qb.query(sqlDB, projections, selection, selectionArgs, null, null, colUrl)
         cursor.count
 
         var id = 0L
@@ -150,7 +165,7 @@ class FeedDatabase(context: Context) {
         val qb = SQLiteQueryBuilder()
         qb.tables = dbEntriesTable
 
-        val cursor =  qb.query(sqlDB, null, null, null, null, null, null)
+        val cursor =  qb.query(sqlDB, null, null, null, null, null, colUrl)
 
         if (cursor.moveToFirst()) {
 

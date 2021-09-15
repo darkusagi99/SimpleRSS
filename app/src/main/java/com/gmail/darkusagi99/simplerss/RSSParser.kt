@@ -1,10 +1,13 @@
 package com.gmail.darkusagi99.simplerss
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.StrictMode
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -118,8 +121,13 @@ class RSSParser {
             connection.doInput = true
             connection.connect()
             val input = connection.inputStream
-            input.readBytes()
-        } catch (e: IOException) {
+
+            val enclosureImage = BitmapFactory.decodeStream(input)
+            val imageByteArray = ByteArrayOutputStream()
+            enclosureImage.compress(Bitmap.CompressFormat.PNG, 100, imageByteArray)
+            imageByteArray.toByteArray()
+
+        } catch (e: Exception) {
             e.printStackTrace()
             null
         }
