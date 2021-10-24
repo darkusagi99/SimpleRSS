@@ -25,7 +25,7 @@ class RSSParser {
     private var rssItem : FeedEntry ?= null
     private var text: String? = null
 
-    fun refreshFeed(feedUrl : String, lastUpdate : Long, dbManager : FeedDatabase) {
+    fun refreshFeed(feedUrl: String, lastUpdate: Long, dbManager: FeedDatabase) {
         val stream: InputStream?
 
         val connectionUrl = URL(feedUrl)
@@ -61,7 +61,7 @@ class RSSParser {
     }
 
     // Parse RSS Feed entries and return result List
-    private fun parse(inputStream: InputStream, lastUpdate: Long, dbManager : FeedDatabase) : Long {
+    private fun parse(inputStream: InputStream, lastUpdate: Long, dbManager: FeedDatabase) : Long {
         try {
             val factory = XmlPullParserFactory.newInstance()
             factory.isNamespaceAware = true
@@ -87,13 +87,15 @@ class RSSParser {
                             dbManager.insertEntry(rssItem)
                         }
                         foundItem = false
-                    } else if ( foundItem && tagname.equals("title", ignoreCase = true)) {
+                    } else if (foundItem && tagname.equals("title", ignoreCase = true)) {
                         rssItem!!.title = text.toString()
                     } else if (foundItem && tagname.equals("link", ignoreCase = true)) {
                         rssItem!!.link = text.toString()
                     } else if (foundItem && tagname.equals("pubDate", ignoreCase = true)) {
                         currentTime = extractDate(text.toString())
-                        if (currentTime > maxUpdateTime) { maxUpdateTime = currentTime}
+                        if (currentTime > maxUpdateTime) {
+                            maxUpdateTime = currentTime
+                        }
                         rssItem!!.pubDate = currentTime
                     } else if (foundItem && tagname.equals("enclosure", ignoreCase = true)) {
                         rssItem!!.imgLink = parser.getAttributeValue(null, "url")
@@ -121,11 +123,14 @@ class RSSParser {
             connection.doInput = true
             connection.connect()
             val input = connection.inputStream
+            val contentType = connection.getHeaderField("Content-Type")
+            val isImage = contentType.startsWith("image/") // if img is true then it is an image
 
-            val enclosureImage = BitmapFactory.decodeStream(input)
-            val imageByteArray = ByteArrayOutputStream()
-            enclosureImage.compress(Bitmap.CompressFormat.PNG, 100, imageByteArray)
-            imageByteArray.toByteArray()
+            return if (isImage) {
+                input.readBytes()
+            } else {
+                null
+            }
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -133,7 +138,7 @@ class RSSParser {
         }
     }
 
-    private fun extractDate(dateString : String) : Long {
+    private fun extractDate(dateString: String) : Long {
         return LocalDateTime.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse(dateString))?.toEpochSecond(ZoneOffset.UTC)!!
     }
 
